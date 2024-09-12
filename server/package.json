@@ -3,9 +3,9 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"scripts": {
-    "dev": "nodemon src/index.ts",
-    "start": "node dist/index.js",
-		"build": "npx tsc", 
+		"dev": "nodemon src/index.ts",
+		"start": "node dist/index.js",
+		"build": "npx tsc",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
@@ -15,7 +15,8 @@
 	"dependencies": {
 		"dotenv": "^16.4.5",
 		"expres": "^0.0.5",
-		"express": "^4.21.0"
+		"express": "^4.21.0",
+		"json-rules-engine": "^6.5.0"
 	},
 	"devDependencies": {
 		"@types/express": "^4.17.21",

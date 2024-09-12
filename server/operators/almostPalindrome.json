@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Almost Palindrome",
+    "conditions": {
+      "all": [
+        {
+          "fact": "palindromeString",
+          "operator": "almostPalindrome",
+          "value": true
+        }
+      ]
+    },
+    "event": {
+      "type": "almost-palindrome",
+      "params": {
+        "message": "The input string is almost a palindrome!"
+      }
+    }
+  }
+]
