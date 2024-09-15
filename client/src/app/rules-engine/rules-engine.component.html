@@ -1,1 +1,23 @@
-<p>rules-engine works!</p>
+<main>
+  <p>asdf</p>
+  <div>
+      <select (change)="onSelect($event)">
+          <option *ngFor="let item of items" [value]="item">{{ item }}</option>
+      </select>
+  </div>
+
+  <div *ngIf="selectedItem">
+      <h2>{{ selectedItem }}</h2>
+      <div *ngFor="let input of inputs">
+          <label>{{input.label}}</label>
+          <input [type]="input.type" [placeholder]="input.placeholder" [(ngModel)]="input.value">
+      </div>
+      <button (click)="executeFunction()">Execute</button>
+      <div *ngIf="output">
+          <h3>Output:</h3>
+          <p>{{ output }}</p>
+      </div>
+  </div>
+
+
+</main>

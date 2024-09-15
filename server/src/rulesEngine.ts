@@ -1,6 +1,13 @@
+import { json } from "body-parser";
 import { Engine } from "json-rules-engine";
 
 const engine = new Engine();
+
+const jsonRules = require("../operators/almostPalindrome.json");
+
+console.log(jsonRules);
+
+engine.addRule(jsonRules);
 
 // OPERATORS LOGIC
 function isAlmostPalindrome(str: string): boolean {
@@ -21,9 +28,6 @@ function isAlmostPalindrome(str: string): boolean {
 }
 
 function addPalindromeOperator(): void {
-	const jsonRules = require("./operators/almostPalindrome.json");
-
-	engine.addRule(jsonRules);
 	engine.addOperator(
 		"almostPalindrome",
 		(factValue: string, jsonValue: boolean) => {
@@ -32,28 +36,28 @@ function addPalindromeOperator(): void {
 	);
 }
 
-const operatorAlmostPalindrome = async (
-	palindromeString: string
-): Promise<string | undefined> => {
+const operatorAlmostPalindrome = async (palindromeString: string): Promise<string> => {
 	const facts = { palindromeString };
+
+	console.log({ facts });
 
 	addPalindromeOperator();
 
-	return new Promise((resolve, reject) => {
-		engine
-			.run(facts)
-			.then((results) => {
-				let message: string | undefined = undefined;
-				message = results.events.length
-					? results.events[0].params?.["message"]
-					: "Not an almost palindrome";
-				resolve(message);
-			})
-			.catch((error) => {
-				console.log(error);
-				reject(error); // Reject the promise in case of an error
-			});
-	});
+	try {
+		const results = await engine.run(facts);
+
+		const message =
+			results.events.length > 0
+				? results.events[0].params?.["message"] ||
+				  "Almost palindrome, but no message."
+				: "Not an almost palindrome";
+
+		console.log({ message });
+		return message;
+	} catch (error) {
+		console.error("Error running palindrome engine: ", error);
+		throw new Error("Internal error processing palindrome logic.");
+	}
 };
 
 export { operatorAlmostPalindrome };

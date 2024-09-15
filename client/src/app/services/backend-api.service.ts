@@ -7,12 +7,14 @@ import { HttpClient } from '@angular/common/http';
 
 export class BackendAPIService {
   constructor(private http: HttpClient) {}
+  
   getMessage() {
     return this.http.get('http://localhost:3000/');
   }
 
-  operatorAlmostPalindrome(value: any): any {
-    return this.http.post('http://localhost:3000/');
+  operatorAlmostPalindrome(palindromeString: string): any {
+    console.log({palindromeString});
+    return this.http.post('http://localhost:3000/almost-palindrome', {palindromeString});
   }
 
 }

@@ -6,7 +6,7 @@ import { BackendAPIService } from './services/backend-api.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, RulesEngineComponent,  ],
+  imports: [RouterOutlet, RulesEngineComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

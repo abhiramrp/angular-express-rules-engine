@@ -1,16 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BackendAPIService } from '../services/backend-api.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-rules-engine',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, FormsModule],
   templateUrl: './rules-engine.component.html',
   styleUrl: './rules-engine.component.scss'
 })
-export class RulesEngineComponent {
+export class RulesEngineComponent implements OnInit {
 
   constructor(private backendApi: BackendAPIService) {}
+
+  ngOnInit() {
+  }
 
   items: string[] = [
     'Date Calculator',
