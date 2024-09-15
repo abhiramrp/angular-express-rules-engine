@@ -1,15 +1,25 @@
-import { json } from "body-parser";
 import { Engine } from "json-rules-engine";
+const levenshtein = require("fast-levenshtein");
 
 const engine = new Engine();
 
-const jsonRules = require("../operators/almostPalindrome.json");
-
-console.log(jsonRules);
-
-engine.addRule(jsonRules);
-
 // OPERATORS LOGIC
+function calculateSimilarity(text1: string, text2: string): number {
+	// Normalize by removing extra whitespace and converting to lowercase
+	const normalizedText1 = text1.trim().replace(/\s+/g, " ").toLowerCase();
+	const normalizedText2 = text2.trim().replace(/\s+/g, " ").toLowerCase();
+
+	// Calculate Levenshtein distance
+	const distance = levenshtein.get(normalizedText1, normalizedText2);
+
+	// Calculate the maximum possible length for normalization
+	const maxLength = Math.max(normalizedText1.length, normalizedText2.length);
+
+	// Calculate similarity percentage
+	const similarity = ((maxLength - distance) / maxLength) * 100;
+	return similarity;
+}
+
 function isAlmostPalindrome(str: string): boolean {
 	const isPalindrome = (s: string) => s === s.split("").reverse().join("");
 
@@ -27,21 +37,52 @@ function isAlmostPalindrome(str: string): boolean {
 	return false;
 }
 
-function addPalindromeOperator(): void {
+const operatorTextSimilarity = async (text1: string, text2: string): Promise<string> => {
+	const jsonRulesData = require("../operators/textSimilarity.json");
+	engine.addRule(jsonRulesData);
+
+	const facts = { texts: { text1, text2 } };
+
+	console.log({ facts });
+
+	engine.addOperator("textSimilarity", (factValue: any, jsonValue: number) => {
+		return calculateSimilarity(factValue.text1, factValue.text2) >= jsonValue;
+	});
+
+	try {
+		const results = await engine.run(facts);
+
+		const message =
+			results.events.length > 0
+				? results.events[0].params?.["message"] ||
+				  "The two strings are similar, but no message."
+				: "The two strings are not similar.";
+
+		console.log({ message });
+		return message;
+
+	} catch (error) {
+		console.error("Error running text similiary operator: ", error);
+		throw new Error("Internal error processing text similarity logic.");
+	}
+
+
+};
+
+const operatorAlmostPalindrome = async (palindromeString: string): Promise<string> => {
+	const jsonRulesData = require("../operators/almostPalindrome.json");
+	engine.addRule(jsonRulesData);
+
+	const facts = { palindromeString };
+
+	console.log({ facts });
+
 	engine.addOperator(
 		"almostPalindrome",
 		(factValue: string, jsonValue: boolean) => {
 			return isAlmostPalindrome(factValue) === jsonValue;
 		}
 	);
-}
-
-const operatorAlmostPalindrome = async (palindromeString: string): Promise<string> => {
-	const facts = { palindromeString };
-
-	console.log({ facts });
-
-	addPalindromeOperator();
 
 	try {
 		const results = await engine.run(facts);
@@ -55,9 +96,9 @@ const operatorAlmostPalindrome = async (palindromeString: string): Promise<strin
 		console.log({ message });
 		return message;
 	} catch (error) {
-		console.error("Error running palindrome engine: ", error);
+		console.error("Error running palindrome operator: ", error);
 		throw new Error("Internal error processing palindrome logic.");
 	}
 };
 
-export { operatorAlmostPalindrome };
+export { operatorAlmostPalindrome, operatorTextSimilarity};
