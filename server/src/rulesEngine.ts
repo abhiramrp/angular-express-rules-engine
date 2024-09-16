@@ -20,25 +20,82 @@ function calculateSimilarity(text1: string, text2: string): number {
 	return similarity;
 }
 
-function isAlmostPalindrome(str: string): boolean {
+function isAlmostPalindrome(str: string, diff: number): boolean {
 	const isPalindrome = (s: string) => s === s.split("").reverse().join("");
 
-	if (isPalindrome(str)) {
-		return true;
-	}
+	function canBePalindrome(s: string, removalsLeft: number): boolean {
+		if(removalsLeft < 0) {
+			removalsLeft = 0; 
+		}
 
-	for (let i = 0; i < str.length; i++) {
-		const modifiedStr = str.slice(0, i) + str.slice(i + 1);
-		if (isPalindrome(modifiedStr)) {
+		if (isPalindrome(s)) {
 			return true;
 		}
+
+		// If no removals are left and it's not a palindrome, return false
+		if (removalsLeft === 0) {
+			return false;
+		}
+
+		// Try removing each character and recursively check
+		for (let i = 0; i < s.length; i++) {
+			const modifiedStr = s.slice(0, i) + s.slice(i + 1);
+			if (canBePalindrome(modifiedStr, removalsLeft - 1)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
-	return false;
+	return canBePalindrome(str, diff);
 }
 
+function getDateDifference(date1: Date, date2: Date): number[] {
+  if (date1 > date2) {
+        [date1, date2] = [date2, date1];
+    }
+
+    let years = date2.getFullYear() - date1.getFullYear();
+    let months = date2.getMonth() - date1.getMonth();
+    let days = date2.getDate() - date1.getDate();
+    let hours = date2.getHours() - date1.getHours();
+    let minutes = date2.getMinutes() - date1.getMinutes();
+    let seconds = date2.getSeconds() - date1.getSeconds();
+
+    console.log(years, months, days, hours, minutes, seconds);
+
+    if (seconds < 0) {
+        seconds += 60;
+        minutes -= 1;
+    }
+    if (minutes < 0) {
+        minutes += 60;
+        hours -= 1;
+    }
+    if (hours < 0) {
+        hours += 24;
+        days -= 1;
+    }
+    if (days < 0) {
+        const prevMonth = new Date(date2.getFullYear(), date2.getMonth() - 1, 0);
+        days += prevMonth.getDate();
+        months -= 1;
+    }
+    if (months < 0) {
+        months += 12;
+        years -= 1;
+    }
+
+  let arr: number[] = [years, months, days, hours, minutes, seconds];
+
+  return arr; 
+}
+
+// OPERATORS
+
 const operatorTextSimilarity = async (text1: string, text2: string): Promise<string> => {
-	const jsonRulesData = require("../operators/textSimilarity.json");
+	const jsonRulesData = require("../jsonfiles/operators/textSimilarity.json");
 	engine.addRule(jsonRulesData);
 
 	const facts = { texts: { text1, text2 } };
@@ -70,7 +127,7 @@ const operatorTextSimilarity = async (text1: string, text2: string): Promise<str
 };
 
 const operatorAlmostPalindrome = async (palindromeString: string): Promise<string> => {
-	const jsonRulesData = require("../operators/almostPalindrome.json");
+	const jsonRulesData = require("../jsonfiles/operators/almostPalindrome.json");
 	engine.addRule(jsonRulesData);
 
 	const facts = { palindromeString };
@@ -79,8 +136,8 @@ const operatorAlmostPalindrome = async (palindromeString: string): Promise<strin
 
 	engine.addOperator(
 		"almostPalindrome",
-		(factValue: string, jsonValue: boolean) => {
-			return isAlmostPalindrome(factValue) === jsonValue;
+		(factValue: string, jsonValue: number) => {
+			return isAlmostPalindrome(factValue, jsonValue);
 		}
 	);
 
@@ -101,4 +158,5 @@ const operatorAlmostPalindrome = async (palindromeString: string): Promise<strin
 	}
 };
 
-export { operatorAlmostPalindrome, operatorTextSimilarity};
+
+export {operatorAlmostPalindrome, operatorTextSimilarity};

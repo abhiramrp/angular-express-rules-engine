@@ -5,7 +5,7 @@
 			{
 				"fact": "palindromeString",
 				"operator": "almostPalindrome",
-				"value": true
+				"value": 1
 			}
 		]
 	},

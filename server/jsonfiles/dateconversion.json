@@ -1,0 +1,26 @@
+{
+	"MM/DD/YYYY": {
+		"locale": "en-US",
+		"options": { "year": "numeric", "month": "2-digit", "day": "2-digit" }
+	},
+	"DD/MM/YYYY": {
+		"locale": "en-GB",
+		"options": { "year": "numeric", "month": "2-digit", "day": "2-digit" }
+	},
+	"Mon Day, Year": {
+		"locale": "en-US",
+		"options": { "month": "short", "day": "numeric", "year": "numeric" }
+	},
+	"Day Mon Year": {
+		"locale": "en-GB",
+		"options": { "month": "short", "day": "numeric", "year": "numeric" }
+	},
+	"Weekday, Month Day, Year": {
+		"locale": "en-US",
+		"options": {"weekday": "long", "year": "numeric", "month": "long", "day": "numeric"}
+	},
+	"Weekday Day Month Year": {
+		"locale": "en-GB",
+		"options": {"weekday": "long", "year": "numeric", "month": "long", "day": "numeric"}
+	}
+}
