@@ -6,6 +6,11 @@
       </select>
   </div>
 
+  <div>
+    <button (click)="login()">Login with Cognito</button>
+    <button (click)="logout()">Logout</button>
+  </div>
+
   <div *ngIf="selectedItem">
     <h2>{{ selectedItem }}</h2>
     <div *ngFor="let input of inputs">

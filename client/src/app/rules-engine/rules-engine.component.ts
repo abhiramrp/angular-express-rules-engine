@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { BackendAPIService } from '../backend-api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../auth.service'; //
 
 @Component({
   selector: 'app-rules-engine',
@@ -11,7 +12,9 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './rules-engine.component.scss',
 })
 export class RulesEngineComponent {
-  constructor(private api: BackendAPIService) {}
+  constructor(private api: BackendAPIService,
+     private authService: AuthService
+    ) {}
 
   items: string[] = [
     'Text Similarity',
@@ -26,6 +29,9 @@ export class RulesEngineComponent {
   selectedItem: string | null = null;
   inputs: any[] = [];
   output: string = '';
+
+
+
 
   onSelect(event: Event): void {
     const target = event.target as HTMLSelectElement;
@@ -69,7 +75,7 @@ export class RulesEngineComponent {
       case 'Timezone Conversion':
         return [
           { label: 'Date & Time:', type: 'datetime-local'},
-          { label: 'Timezone', type: 'datalist', options:["Asia/Kolkata", "Asia/Kathmandu"]}, 
+          { label: 'Timezone', type: 'datalist', options:["Asia/Kolkata", "Asia/Kathmandu"]},
         ]
 
       default:
@@ -103,5 +109,14 @@ export class RulesEngineComponent {
       default:
         return 'No action defined';
     }
+  }
+
+ // Cognito login and logout
+  login() {
+    this.authService.login();  // Redirect to Cognito Hosted UI
+  }
+
+  logout() {
+    this.authService.logout();  // Redirect to Cognito logout
   }
 }
