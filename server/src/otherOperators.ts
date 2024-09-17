@@ -1,3 +1,8 @@
+import DetectLanguage from "detectlanguage";
+import dotenv from "dotenv";
+
+dotenv.config();
+
 // OPERATORS LOGIC
 
 function getDateDifference(date1: Date, date2: Date): number[] {
@@ -62,13 +67,43 @@ async function getGeoData(ipAddress: string): Promise<any> {
 }
 
 async function getLanguage(text: string): Promise<any> {
-	
+	const apiKey = process.env.LANGUAGE_APIKEY || "";
+
+	try {
+		const detectlanguage = new DetectLanguage(apiKey);
+
+		let langCode = "";
+
+		await detectlanguage.detectCode(text).then(function (result) {
+			console.log(JSON.stringify(result));
+			langCode = result || "";
+		});
+
+		if (langCode === "") {
+			throw new Error("Language not detected");
+		}
+
+		let langList: any[] = [];
+
+		await detectlanguage.languages().then(function (result) {
+			langList = result;
+		});
+
+		const language = langList.find((lang) => lang.code === langCode);
+
+		if (!language) {
+			throw new Error("Language not found");
+		}
+
+		return language.name;
+	} catch (error) {
+		console.error("Language API issue", error);
+		throw new Error("Language API failed to fetch data");
+	}
 }
 
 // OPERATORS
-const operatorDateComparison = async (date1: Date,
-	date2: Date
-): Promise<string> => {
+const operatorDateComparison = async (date1: Date, date2: Date): Promise<string> => {
 	try {
 		const differenceArray = getDateDifference(date1, date2);
 
@@ -108,10 +143,7 @@ const operatorDateComparison = async (date1: Date,
 	}
 };
 
-const operatorTimezoneConversion = async (
-	date: Date,
-	timezone: string
-): Promise<string> => {
+const operatorTimezoneConversion = async (date: Date, timezone: string): Promise<string> => {
 	try {
 		const newDate = new Intl.DateTimeFormat("en-us", {
 			dateStyle: "full",
@@ -125,10 +157,7 @@ const operatorTimezoneConversion = async (
 	}
 };
 
-const operatorDateConversion = async (
-	date: Date,
-	datetype: string
-): Promise<string> => {
+const operatorDateConversion = async (date: Date, datetype: string): Promise<string> => {
 	try {
 		const dateFormatsData = require("../jsonfiles/dateconversion.json");
 		console.log(dateFormatsData);
@@ -170,8 +199,8 @@ const operatorGeolocation = async (ipAddress: string): Promise<string> => {
 
 const operatorLanguage = async (text: string): Promise<string> => {
 	try {
-		return ""; 
-	} catch(error) {
+		return getLanguage(text);
+	} catch (error) {
 		console.error("Error running language operator: ", error);
 		throw new Error("Internal error processing language logic.");
 	}
@@ -182,4 +211,5 @@ export {
 	operatorTimezoneConversion,
 	operatorDateConversion,
 	operatorGeolocation,
+	operatorLanguage,
 };

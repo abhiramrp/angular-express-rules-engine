@@ -11,6 +11,7 @@ import {
 	operatorDateComparison,
 	operatorDateConversion,
 	operatorGeolocation,
+	operatorLanguage,
 	operatorTimezoneConversion,
 } from "./otherOperators";
 
@@ -153,6 +154,24 @@ app.post("/geolocation", async (req: Request, res: Response) => {
 
 	try {
 		const result = await operatorGeolocation(ipAddress);
+		console.log({ result });
+		res.json({ result });
+	} catch (error) {
+		res.status(400).json({ error });
+	}
+});
+
+app.post("/language", async (req: Request, res: Response) => {
+	const { text } = req.body;
+
+	console.log(text);
+
+	if (!text) {
+		return res.status(400).json({ error: "Inputs required." });
+	}
+
+	try {
+		const result = await operatorLanguage(text);
 		console.log({ result });
 		res.json({ result });
 	} catch (error) {
