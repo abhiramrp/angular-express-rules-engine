@@ -20,15 +20,11 @@ dotenv.config();
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(
-	cors({
-		origin: "http://localhost:4200",
-	})
-);
-
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
+	// res.send("Hello from Express with TypeScript");
 	res.send("Hello from Express with TypeScript");
 });
 

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { BackendAPIService } from '../services/backend-api.service';
+import { Component, inject } from '@angular/core';
+import { BackendAPIService } from '../backend-api.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -8,22 +8,19 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './rules-engine.component.html',
-  styleUrl: './rules-engine.component.scss'
+  styleUrl: './rules-engine.component.scss',
 })
-export class RulesEngineComponent implements OnInit {
-
-  constructor(private backendApi: BackendAPIService) {}
-
-  ngOnInit() {
-  }
+export class RulesEngineComponent {
+  constructor(private api: BackendAPIService) {}
 
   items: string[] = [
-    'Date Calculator',
     'Text Similarity',
     'Geolocation Identification',
     'Almost Palindrome',
     'Language Detection',
-    'Traffic Predictor',
+    'Date Comparison', 
+    'Timezone Conversion', 
+    'Date Conversion'
   ];
 
   selectedItem: string | null = null;
@@ -34,30 +31,32 @@ export class RulesEngineComponent implements OnInit {
     const target = event.target as HTMLSelectElement;
     this.selectedItem = target.value;
     this.inputs = this.getInputsForItem(this.selectedItem);
-    this.output = "";
+    this.output = '';
   }
 
   getInputsForItem(item: string): any[] {
     // Define different input structures for each item here
     switch (item) {
-      case 'Date Calculator':
-        return [{ label: "L: ", type: 'text', placeholder: 'Input 1' }];
       case 'Text Similarity':
         return [
-          { label: "L: ", type: 'text', placeholder: 'Text 1' },
-          { label: "L: ", type: 'text', placeholder: 'Text 2' },
+          { label: 'Text 1: ', type: 'text', placeholder: 'Text 1' },
+          { label: 'Text 2: ', type: 'text', placeholder: 'Text 2' },
         ];
       case 'Geolocation Identification':
         return [
-          { label: "L: ", type: 'number', placeholder: 'Input 3' },
-          { label: "L: ", type: 'text', placeholder: 'Input 3 Text' },
+          { label: 'IP Address: ', type: 'text', placeholder: 'IP Address' },
         ];
       case 'Almost Palindrome':
-        return [{ label: "Enter Palindrome: ", type: 'text', placeholder: 'Text' }];
+        return [
+          { label: 'Enter Palindrome: ', type: 'text', placeholder: 'Text' },
+        ];
       case 'Language Detection':
-        return [{ label: "L: ", type: 'text', placeholder: 'Input 5' }];
+        return [{ label: 'Language Text: ', type: 'text', placeholder: 'Enter in any language' }];
       case 'Traffic Predictor':
-        return [{ label: "L: ", type: 'text', placeholder: 'Input 6' }];
+        return [{ label: 'L: ', type: 'text', placeholder: 'Input 6' }];
+      
+      case 'Date Comparison':
+        return [{ label: 'Date & Time:', type: 'datetime-local', placeholder: '' }, { label: 'Date & Time:', type: 'datetime-local', placeholder: '' }];
 
       default:
         return [];
@@ -74,24 +73,23 @@ export class RulesEngineComponent implements OnInit {
     switch (item) {
       case 'Date Calculator':
         return `Executed action for ${item} with input: ${inputs[0].value}`;
-      /*
+
       case 'Text Similarity':
-        return await this.backendApi.operatorTextSimilarity(
+        return await this.api.textSimilarityOperator(
           inputs[0].value,
           inputs[1].value
         );
-        */
+
       case 'Geolocation Identification':
-        return `Executed action for ${item} with inputs: ${inputs[0].value}, ${inputs[1].value}`;
+        return await this.api.geolocationOperator(inputs[0].value);
       case 'Almost Palindrome':
-        return await this.backendApi.operatorAlmostPalindrome(inputs[0].value);
+        return this.api.palindromeOperator(inputs[0].value);
       case 'Language Detection':
-        return `Executed action for ${item} with input: ${inputs[0].value}`;
+        return this.api.languageOperator(inputs[0].value);
       case 'Traffic Predictor':
         return `Executed action for ${item} with input: ${inputs[0].value}`;
       default:
         return 'No action defined';
     }
   }
-
 }

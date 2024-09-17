@@ -105,7 +105,6 @@ app.post("/date-conversion", (req, res) => __awaiter(void 0, void 0, void 0, fun
     if (!date || !datetype) {
         return res.status(400).json({ error: "Inputs required." });
     }
-    ;
     const d = new Date(date);
     if (isNaN(d.getTime())) {
         return res.status(400).json({ error: "Invalid date format." });
@@ -127,6 +126,21 @@ app.post("/geolocation", (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
     try {
         const result = yield (0, otherOperators_1.operatorGeolocation)(ipAddress);
+        console.log({ result });
+        res.json({ result });
+    }
+    catch (error) {
+        res.status(400).json({ error });
+    }
+}));
+app.post("/language", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { text } = req.body;
+    console.log(text);
+    if (!text) {
+        return res.status(400).json({ error: "Inputs required." });
+    }
+    try {
+        const result = yield (0, otherOperators_1.operatorLanguage)(text);
         console.log({ result });
         res.json({ result });
     }

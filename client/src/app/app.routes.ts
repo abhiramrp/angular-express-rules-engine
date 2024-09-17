@@ -5,6 +5,8 @@ export const routes: Routes = [
   {
     path: 'rules-engine', 
     title: 'Rules Engine', 
-    component: RulesEngineComponent, 
+    component: RulesEngineComponent
   }
 ];
+
+

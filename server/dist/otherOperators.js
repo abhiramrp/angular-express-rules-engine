@@ -1,5 +1,4 @@
 "use strict";
-// OPERATORS LOGIC
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -9,8 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.operatorGeolocation = exports.operatorDateConversion = exports.operatorTimezoneConversion = exports.operatorDateComparison = void 0;
+exports.operatorLanguage = exports.operatorGeolocation = exports.operatorDateConversion = exports.operatorTimezoneConversion = exports.operatorDateComparison = void 0;
+const detectlanguage_1 = __importDefault(require("detectlanguage"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+// OPERATORS LOGIC
 function getDateDifference(date1, date2) {
     if (date1 > date2) {
         [date1, date2] = [date2, date1];
@@ -49,11 +55,11 @@ function getGeoData(ipAddress) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const response = yield fetch(`http://ip-api.com/json/${ipAddress}`, {
-                method: 'GET',
+                method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                     // Add any other headers if needed, like Authorization
-                }
+                },
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -64,6 +70,35 @@ function getGeoData(ipAddress) {
         catch (error) {
             console.error("IP API issue", error);
             throw new Error("IP API failed to fetch data");
+        }
+    });
+}
+function getLanguage(text) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const apiKey = process.env.LANGUAGE_APIKEY || "";
+        try {
+            const detectlanguage = new detectlanguage_1.default(apiKey);
+            let langCode = "";
+            yield detectlanguage.detectCode(text).then(function (result) {
+                console.log(JSON.stringify(result));
+                langCode = result || "";
+            });
+            if (langCode === "") {
+                throw new Error("Language not detected");
+            }
+            let langList = [];
+            yield detectlanguage.languages().then(function (result) {
+                langList = result;
+            });
+            const language = langList.find((lang) => lang.code === langCode);
+            if (!language) {
+                throw new Error("Language not found");
+            }
+            return language.name;
+        }
+        catch (error) {
+            console.error("Language API issue", error);
+            throw new Error("Language API failed to fetch data");
         }
     });
 }
@@ -105,7 +140,11 @@ const operatorDateComparison = (date1, date2) => __awaiter(void 0, void 0, void 
 exports.operatorDateComparison = operatorDateComparison;
 const operatorTimezoneConversion = (date, timezone) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newDate = new Intl.DateTimeFormat('en-us', { dateStyle: 'full', timeStyle: 'long', timeZone: timezone }).format(date);
+        const newDate = new Intl.DateTimeFormat("en-us", {
+            dateStyle: "full",
+            timeStyle: "long",
+            timeZone: timezone,
+        }).format(date);
         return newDate;
     }
     catch (error) {
@@ -116,7 +155,7 @@ const operatorTimezoneConversion = (date, timezone) => __awaiter(void 0, void 0,
 exports.operatorTimezoneConversion = operatorTimezoneConversion;
 const operatorDateConversion = (date, datetype) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const dateFormatsData = require('../jsonfiles/dateconversion.json');
+        const dateFormatsData = require("../jsonfiles/dateconversion.json");
         console.log(dateFormatsData);
         const v = dateFormatsData[datetype];
         const newDate = new Date(date).toLocaleDateString(v["locale"], v["options"]);
@@ -132,12 +171,12 @@ const operatorGeolocation = (ipAddress) => __awaiter(void 0, void 0, void 0, fun
     try {
         const apiData = yield getGeoData(ipAddress);
         console.log("apiData", apiData);
-        if (apiData['status'] !== 'success') {
+        if (apiData["status"] !== "success") {
             return `SSL unavailable for this endpoint. Try again or use a different IP Address`;
         }
-        let message = `Coordinates: ${apiData['lat']}, ${apiData['lon']}\n`;
-        message = message.concat(`Location: ${apiData['city']}, ${apiData['region']} ${apiData['country']}\n`);
-        message = message.concat(`${apiData['as']}`);
+        let message = `Coordinates: ${apiData["lat"]}, ${apiData["lon"]}\n`;
+        message = message.concat(`Location: ${apiData["city"]}, ${apiData["region"]} ${apiData["country"]}\n`);
+        message = message.concat(`${apiData["as"]}`);
         return message;
     }
     catch (error) {
@@ -146,3 +185,13 @@ const operatorGeolocation = (ipAddress) => __awaiter(void 0, void 0, void 0, fun
     }
 });
 exports.operatorGeolocation = operatorGeolocation;
+const operatorLanguage = (text) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        return getLanguage(text);
+    }
+    catch (error) {
+        console.error("Error running language operator: ", error);
+        throw new Error("Internal error processing language logic.");
+    }
+});
+exports.operatorLanguage = operatorLanguage;
