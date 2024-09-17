@@ -26,18 +26,29 @@ function calculateSimilarity(text1, text2) {
     const similarity = ((maxLength - distance) / maxLength) * 100;
     return similarity;
 }
-function isAlmostPalindrome(str) {
+function isAlmostPalindrome(str, diff) {
     const isPalindrome = (s) => s === s.split("").reverse().join("");
-    if (isPalindrome(str)) {
-        return true;
-    }
-    for (let i = 0; i < str.length; i++) {
-        const modifiedStr = str.slice(0, i) + str.slice(i + 1);
-        if (isPalindrome(modifiedStr)) {
+    function canBePalindrome(s, removalsLeft) {
+        if (removalsLeft < 0) {
+            removalsLeft = 0;
+        }
+        if (isPalindrome(s)) {
             return true;
         }
+        // If no removals are left and it's not a palindrome, return false
+        if (removalsLeft === 0) {
+            return false;
+        }
+        // Try removing each character and recursively check
+        for (let i = 0; i < s.length; i++) {
+            const modifiedStr = s.slice(0, i) + s.slice(i + 1);
+            if (canBePalindrome(modifiedStr, removalsLeft - 1)) {
+                return true;
+            }
+        }
+        return false;
     }
-    return false;
+    return canBePalindrome(str, diff);
 }
 function getDateDifference(date1, date2) {
     if (date1 > date2) {
@@ -77,7 +88,7 @@ function getDateDifference(date1, date2) {
 // OPERATORS
 const operatorTextSimilarity = (text1, text2) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const jsonRulesData = require("../operators/textSimilarity.json");
+    const jsonRulesData = require("../jsonfiles/operators/textSimilarity.json");
     engine.addRule(jsonRulesData);
     const facts = { texts: { text1, text2 } };
     console.log({ facts });
@@ -101,12 +112,12 @@ const operatorTextSimilarity = (text1, text2) => __awaiter(void 0, void 0, void 
 exports.operatorTextSimilarity = operatorTextSimilarity;
 const operatorAlmostPalindrome = (palindromeString) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const jsonRulesData = require("../operators/almostPalindrome.json");
+    const jsonRulesData = require("../jsonfiles/operators/almostPalindrome.json");
     engine.addRule(jsonRulesData);
     const facts = { palindromeString };
     console.log({ facts });
     engine.addOperator("almostPalindrome", (factValue, jsonValue) => {
-        return isAlmostPalindrome(factValue) === jsonValue;
+        return isAlmostPalindrome(factValue, jsonValue);
     });
     try {
         const results = yield engine.run(facts);
