@@ -18,9 +18,9 @@ export class RulesEngineComponent {
     'Geolocation Identification',
     'Almost Palindrome',
     'Language Detection',
-    'Date Comparison', 
-    'Timezone Conversion', 
-    'Date Conversion'
+    'Date Comparison',
+    'Timezone Conversion',
+    'Date Conversion',
   ];
 
   selectedItem: string | null = null;
@@ -51,12 +51,26 @@ export class RulesEngineComponent {
           { label: 'Enter Palindrome: ', type: 'text', placeholder: 'Text' },
         ];
       case 'Language Detection':
-        return [{ label: 'Language Text: ', type: 'text', placeholder: 'Enter in any language' }];
+        return [
+          {
+            label: 'Language Text: ',
+            type: 'text',
+            placeholder: 'Enter in any language',
+          },
+        ];
       case 'Traffic Predictor':
         return [{ label: 'L: ', type: 'text', placeholder: 'Input 6' }];
-      
+
       case 'Date Comparison':
-        return [{ label: 'Date & Time:', type: 'datetime-local', placeholder: '' }, { label: 'Date & Time:', type: 'datetime-local', placeholder: '' }];
+        return [
+          { label: 'Date & Time:', type: 'datetime-local'},
+          { label: 'Date & Time:', type: 'datetime-local'},
+        ];
+      case 'Timezone Conversion':
+        return [
+          { label: 'Date & Time:', type: 'datetime-local'},
+          { label: 'Timezone', type: 'datalist', options:["Asia/Kolkata", "Asia/Kathmandu"]}, 
+        ]
 
       default:
         return [];
@@ -71,9 +85,6 @@ export class RulesEngineComponent {
 
   async performAction(item: string, inputs: any[]): Promise<any> {
     switch (item) {
-      case 'Date Calculator':
-        return `Executed action for ${item} with input: ${inputs[0].value}`;
-
       case 'Text Similarity':
         return await this.api.textSimilarityOperator(
           inputs[0].value,
@@ -86,8 +97,9 @@ export class RulesEngineComponent {
         return this.api.palindromeOperator(inputs[0].value);
       case 'Language Detection':
         return this.api.languageOperator(inputs[0].value);
-      case 'Traffic Predictor':
-        return `Executed action for ${item} with input: ${inputs[0].value}`;
+      case 'Date Comparison':
+        return this.api.dateComparisonOperator(inputs[0].value,
+          inputs[1].value);
       default:
         return 'No action defined';
     }

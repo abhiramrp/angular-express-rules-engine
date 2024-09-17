@@ -97,6 +97,25 @@ export class BackendAPIService {
     }
   }
 
+  async dateComparisonOperator(date1: string, date2: string): Promise<any | null> {
+    try {
+      const response = await this.http.post<OperatorResponse>(`${this.url}/date-comparison`, {date1, date2}).toPromise();
+      console.log(response);
+      if (response) {
+        console.log(response.result); // This will print the value of the 'result' field
+        return response.result; // Return the 'result' field
+      } else {
+        console.error("Response is undefined");
+        return null;
+      }
+
+    } catch (error) {
+      console.error(error); 
+      return error; 
+    }
+
+  }
+
 
 
 }
