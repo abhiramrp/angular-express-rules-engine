@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 const cors = require("cors");
 
 import { operatorAlmostPalindrome, operatorTextSimilarity} from "./rulesEngine";
-import { operatorDateComparison, operatorDateConversion, operatorTimezoneConversion } from "./otherOperators";
+import { operatorDateComparison, operatorDateConversion, operatorGeolocation, operatorTimezoneConversion } from "./otherOperators";
 
 dotenv.config();
 
@@ -138,7 +138,27 @@ app.post("/date-conversion", async (req: Request, res: Response) => {
 		res.status(400).json({ error });
 	}
 
-
-
-
 }); 
+
+
+
+
+
+app.post("/geolocation", async (req: Request, res: Response) => {
+	const {ipAddress} = req.body; 
+
+	console.log(ipAddress);
+
+	if (!ipAddress) {
+		return res.status(400).json({ error: "Inputs required." });
+	}
+
+	try {
+		const result = await operatorGeolocation(ipAddress);
+		console.log({ result });
+		res.json({ result });
+	} catch (error) {
+		res.status(400).json({ error });
+	}
+
+});

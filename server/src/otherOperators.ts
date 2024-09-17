@@ -40,6 +40,33 @@ function getDateDifference(date1: Date, date2: Date): number[] {
 }
 
 
+
+async function getGeoData(ipAddress: string): Promise<any> {
+	try {
+		const response = await fetch(`http://ip-api.com/json/${ipAddress}`, {
+			method: 'GET',
+			headers: {
+					'Content-Type': 'application/json',
+					// Add any other headers if needed, like Authorization
+			}
+		}); 
+
+		if (!response.ok) {
+			throw new Error(`HTTP error! status: ${response.status}`);
+	}
+
+	const data = await response.json();
+	return data;
+
+
+	} catch(error) {
+		console.error("IP API issue", error);
+		throw new Error("IP API failed to fetch data");
+	}
+
+}
+
+
 // OPERATORS
 const operatorDateComparison = async (date1: Date,date2: Date): Promise<string> => {
 	try {
@@ -110,4 +137,26 @@ const operatorDateConversion = async (date: Date, datetype: string): Promise<str
   }
 }; 
 
-export { operatorDateComparison, operatorTimezoneConversion, operatorDateConversion };
+const operatorGeolocation = async (ipAddress: string): Promise<string> => {
+	try {
+
+		const apiData = await getGeoData(ipAddress); 
+		console.log("apiData", apiData); 
+
+		if (apiData['status'] !== 'success') {
+			return `SSL unavailable for this endpoint. Try again or use a different IP Address`; 
+		}
+
+		let message = `Coordinates: ${apiData['lat']}, ${apiData['lon']}\n`;
+		message = message.concat(`Location: ${apiData['city']}, ${apiData['region']} ${apiData['country']}\n`); 
+		message = message.concat(`${apiData['as']}`);
+
+		return message; 
+	} catch(error) {
+    console.error("Error running geolocation operator: ", error);
+		throw new Error("Internal error processing geolocation logic.");
+  }
+
+}; 
+
+export { operatorDateComparison, operatorTimezoneConversion, operatorDateConversion, operatorGeolocation};
