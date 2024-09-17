@@ -2,6 +2,17 @@
 
 `npm install`
 
+## Frontend
+
+`cd client`
+
+`npm install`
+
+Run with `ng serve` in client
+Create a component with `ng generate component COMPONENT_NAME`
+
+
+## Backend
 `cd server`
 
 `npm install`

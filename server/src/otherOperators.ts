@@ -39,36 +39,36 @@ function getDateDifference(date1: Date, date2: Date): number[] {
 	return arr;
 }
 
-
-
 async function getGeoData(ipAddress: string): Promise<any> {
 	try {
 		const response = await fetch(`http://ip-api.com/json/${ipAddress}`, {
-			method: 'GET',
+			method: "GET",
 			headers: {
-					'Content-Type': 'application/json',
-					// Add any other headers if needed, like Authorization
-			}
-		}); 
+				"Content-Type": "application/json",
+				// Add any other headers if needed, like Authorization
+			},
+		});
 
 		if (!response.ok) {
 			throw new Error(`HTTP error! status: ${response.status}`);
-	}
+		}
 
-	const data = await response.json();
-	return data;
-
-
-	} catch(error) {
+		const data = await response.json();
+		return data;
+	} catch (error) {
 		console.error("IP API issue", error);
 		throw new Error("IP API failed to fetch data");
 	}
-
 }
 
+async function getLanguage(text: string): Promise<any> {
+	
+}
 
 // OPERATORS
-const operatorDateComparison = async (date1: Date,date2: Date): Promise<string> => {
+const operatorDateComparison = async (date1: Date,
+	date2: Date
+): Promise<string> => {
 	try {
 		const differenceArray = getDateDifference(date1, date2);
 
@@ -108,55 +108,78 @@ const operatorDateComparison = async (date1: Date,date2: Date): Promise<string> 
 	}
 };
 
-const operatorTimezoneConversion = async (date: Date, timezone: string): Promise<string> => {
-  try {
-  
-    const newDate = new Intl.DateTimeFormat('en-us', {dateStyle: 'full', timeStyle: 'long', timeZone: timezone}).format(date); 
-    return newDate;
-
-  } catch(error) {
-    console.error("Error running timezone operator: ", error);
+const operatorTimezoneConversion = async (
+	date: Date,
+	timezone: string
+): Promise<string> => {
+	try {
+		const newDate = new Intl.DateTimeFormat("en-us", {
+			dateStyle: "full",
+			timeStyle: "long",
+			timeZone: timezone,
+		}).format(date);
+		return newDate;
+	} catch (error) {
+		console.error("Error running timezone operator: ", error);
 		throw new Error("Internal error processing timezone logic.");
-  }
-
+	}
 };
 
-const operatorDateConversion = async (date: Date, datetype: string): Promise<string> => {
-  try {
-    const dateFormatsData = require('../jsonfiles/dateconversion.json');
-    console.log(dateFormatsData); 
+const operatorDateConversion = async (
+	date: Date,
+	datetype: string
+): Promise<string> => {
+	try {
+		const dateFormatsData = require("../jsonfiles/dateconversion.json");
+		console.log(dateFormatsData);
 
-    const v =  dateFormatsData[datetype];
+		const v = dateFormatsData[datetype];
 
-    const newDate = new Date(date).toLocaleDateString(v["locale"], v["options"]);
-    return newDate; 
-
-  } catch(error) {
-    console.error("Error running date conversion operator: ", error);
+		const newDate = new Date(date).toLocaleDateString(
+			v["locale"],
+			v["options"]
+		);
+		return newDate;
+	} catch (error) {
+		console.error("Error running date conversion operator: ", error);
 		throw new Error("Internal error processing date conversion logic.");
-  }
-}; 
+	}
+};
 
 const operatorGeolocation = async (ipAddress: string): Promise<string> => {
 	try {
+		const apiData = await getGeoData(ipAddress);
+		console.log("apiData", apiData);
 
-		const apiData = await getGeoData(ipAddress); 
-		console.log("apiData", apiData); 
-
-		if (apiData['status'] !== 'success') {
-			return `SSL unavailable for this endpoint. Try again or use a different IP Address`; 
+		if (apiData["status"] !== "success") {
+			return `SSL unavailable for this endpoint. Try again or use a different IP Address`;
 		}
 
-		let message = `Coordinates: ${apiData['lat']}, ${apiData['lon']}\n`;
-		message = message.concat(`Location: ${apiData['city']}, ${apiData['region']} ${apiData['country']}\n`); 
-		message = message.concat(`${apiData['as']}`);
+		let message = `Coordinates: ${apiData["lat"]}, ${apiData["lon"]}\n`;
+		message = message.concat(
+			`Location: ${apiData["city"]}, ${apiData["region"]} ${apiData["country"]}\n`
+		);
+		message = message.concat(`${apiData["as"]}`);
 
-		return message; 
-	} catch(error) {
-    console.error("Error running geolocation operator: ", error);
+		return message;
+	} catch (error) {
+		console.error("Error running geolocation operator: ", error);
 		throw new Error("Internal error processing geolocation logic.");
-  }
+	}
+};
 
-}; 
+const operatorLanguage = async (text: string): Promise<string> => {
+	try {
+		return ""; 
+	} catch(error) {
+		console.error("Error running language operator: ", error);
+		throw new Error("Internal error processing language logic.");
+	}
+};
 
-export { operatorDateComparison, operatorTimezoneConversion, operatorDateConversion, operatorGeolocation};
+export {
+	operatorDateComparison,
+	operatorTimezoneConversion,
+	operatorDateConversion,
+	operatorGeolocation,
+};
