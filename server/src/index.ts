@@ -124,14 +124,14 @@ app.post("/date-conversion", async (req: Request, res: Response) => {
 		return res.status(400).json({ error: "Inputs required." });
 	}
 
-	const d = new Date(date);
+	const d = new Date(date + "T00:00:00");
 
 	if (isNaN(d.getTime())) {
 		return res.status(400).json({ error: "Invalid date format." });
 	}
 
 	try {
-		const result = await operatorDateConversion(date, datetype);
+		const result = await operatorDateConversion(d, datetype);
 		console.log({ result });
 		res.json({ result });
 	} catch (error) {

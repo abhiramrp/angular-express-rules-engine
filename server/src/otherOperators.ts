@@ -160,9 +160,9 @@ const operatorTimezoneConversion = async (date: Date, timezone: string): Promise
 const operatorDateConversion = async (date: Date, datetype: string): Promise<string> => {
 	try {
 		const dateFormatsData = require("../jsonfiles/dateconversion.json");
-		console.log(dateFormatsData);
-
 		const v = dateFormatsData[datetype];
+
+		console.log(date);
 
 		const newDate = new Date(date).toLocaleDateString(
 			v["locale"],

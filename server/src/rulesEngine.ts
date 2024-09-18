@@ -49,47 +49,6 @@ function isAlmostPalindrome(str: string, diff: number): boolean {
 	return canBePalindrome(str, diff);
 }
 
-function getDateDifference(date1: Date, date2: Date): number[] {
-  if (date1 > date2) {
-        [date1, date2] = [date2, date1];
-    }
-
-    let years = date2.getFullYear() - date1.getFullYear();
-    let months = date2.getMonth() - date1.getMonth();
-    let days = date2.getDate() - date1.getDate();
-    let hours = date2.getHours() - date1.getHours();
-    let minutes = date2.getMinutes() - date1.getMinutes();
-    let seconds = date2.getSeconds() - date1.getSeconds();
-
-    console.log(years, months, days, hours, minutes, seconds);
-
-    if (seconds < 0) {
-        seconds += 60;
-        minutes -= 1;
-    }
-    if (minutes < 0) {
-        minutes += 60;
-        hours -= 1;
-    }
-    if (hours < 0) {
-        hours += 24;
-        days -= 1;
-    }
-    if (days < 0) {
-        const prevMonth = new Date(date2.getFullYear(), date2.getMonth() - 1, 0);
-        days += prevMonth.getDate();
-        months -= 1;
-    }
-    if (months < 0) {
-        months += 12;
-        years -= 1;
-    }
-
-  let arr: number[] = [years, months, days, hours, minutes, seconds];
-
-  return arr; 
-}
-
 // OPERATORS
 
 const operatorTextSimilarity = async (text1: string, text2: string): Promise<string> => {
