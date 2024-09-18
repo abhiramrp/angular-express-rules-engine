@@ -39,38 +39,40 @@ export class RulesEngineComponent {
     switch (item) {
       case 'Text Similarity':
         return [
-          { label: 'Text 1: ', type: 'text', placeholder: 'Text 1' },
-          { label: 'Text 2: ', type: 'text', placeholder: 'Text 2' },
+          { label: 'Text 1', type: 'text', placeholder: 'Text 1' },
+          { label: 'Text 2', type: 'text', placeholder: 'Text 2' },
         ];
       case 'Geolocation Identification':
         return [
-          { label: 'IP Address: ', type: 'text', placeholder: 'IP Address' },
+          { label: 'IP Address', type: 'text', placeholder: 'IP Address' },
         ];
       case 'Almost Palindrome':
         return [
-          { label: 'Enter Palindrome: ', type: 'text', placeholder: 'Text' },
+          { label: 'Enter Palindrome', type: 'text', placeholder: 'Text' },
         ];
       case 'Language Detection':
         return [
           {
-            label: 'Language Text: ',
+            label: 'Language Text',
             type: 'text',
             placeholder: 'Enter in any language',
           },
         ];
-      case 'Traffic Predictor':
-        return [{ label: 'L: ', type: 'text', placeholder: 'Input 6' }];
-
       case 'Date Comparison':
         return [
-          { label: 'Date & Time:', type: 'datetime-local'},
-          { label: 'Date & Time:', type: 'datetime-local'},
+          { label: 'Date & Time', type: 'datetime-local'},
+          { label: 'Date & Time', type: 'datetime-local'},
         ];
       case 'Timezone Conversion':
         return [
-          { label: 'Date & Time:', type: 'datetime-local'},
-          { label: 'Timezone', type: 'datalist', options:["Asia/Kolkata", "Asia/Kathmandu"]}, 
+          { label: 'Date & Time', type: 'datetime-local'},
+          { label: 'Timezone', type: 'datalist', options:this.api.aryIanaTimeZones}, 
         ]
+      case 'Date Conversion':
+        return [
+          { label: 'Date', type: 'date'},
+          { label: 'Date Format', type: 'dropdown', options:["MM/DD/YYYY", "DD/MM/YYYY", "Mon Day, Year", "Day Mon Year", "Weekday, Month Day, Year", "Weekday Day Month Year"]},
+        ];
 
       default:
         return [];
@@ -90,16 +92,19 @@ export class RulesEngineComponent {
           inputs[0].value,
           inputs[1].value
         );
-
       case 'Geolocation Identification':
         return await this.api.geolocationOperator(inputs[0].value);
       case 'Almost Palindrome':
-        return this.api.palindromeOperator(inputs[0].value);
+        return await this.api.palindromeOperator(inputs[0].value);
       case 'Language Detection':
-        return this.api.languageOperator(inputs[0].value);
+        return await this.api.languageOperator(inputs[0].value);
       case 'Date Comparison':
-        return this.api.dateComparisonOperator(inputs[0].value,
+        return await this.api.dateComparisonOperator(inputs[0].value,
           inputs[1].value);
+      case 'Timezone Conversion':
+        return this.api.timezoneConversionOperator(inputs[0].value, inputs[1].value);
+      case 'Date Conversion':
+        return this.api.dateConversionOperator(inputs[0].value, inputs[1].value);
       default:
         return 'No action defined';
     }

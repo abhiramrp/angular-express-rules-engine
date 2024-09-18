@@ -1,8 +1,6 @@
 import { Engine } from "json-rules-engine";
 const levenshtein = require("fast-levenshtein");
 
-const engine = new Engine();
-
 // OPERATORS LOGIC
 function calculateSimilarity(text1: string, text2: string): number {
 	// Normalize by removing extra whitespace and converting to lowercase
@@ -96,6 +94,7 @@ function getDateDifference(date1: Date, date2: Date): number[] {
 
 const operatorTextSimilarity = async (text1: string, text2: string): Promise<string> => {
 	const jsonRulesData = require("../jsonfiles/operators/textSimilarity.json");
+	const engine = new Engine();
 	engine.addRule(jsonRulesData);
 
 	const facts = { texts: { text1, text2 } };
@@ -128,6 +127,7 @@ const operatorTextSimilarity = async (text1: string, text2: string): Promise<str
 
 const operatorAlmostPalindrome = async (palindromeString: string): Promise<string> => {
 	const jsonRulesData = require("../jsonfiles/operators/almostPalindrome.json");
+	const engine = new Engine();
 	engine.addRule(jsonRulesData);
 
 	const facts = { palindromeString };

@@ -1,22 +1,44 @@
 <main>
-  <h1>JSON Rules Engine</h1>
-  <div>
-      <select (change)="onSelect($event)">
-          <option *ngFor="let item of items" [value]="item">{{ item }}</option>
-      </select>
-  </div>
+    <h1>JSON Rules Engine</h1>
+    <div>
+        <select (change)="onSelect($event)">
+            <option *ngFor="let item of items" [value]="item">{{ item }}</option>
+        </select>
+    </div>
 
-  <div *ngIf="selectedItem">
-    <h2>{{ selectedItem }}</h2>
-    <div *ngFor="let input of inputs">
-        <label>{{input.label}}</label>
-        <input [type]="input.type" [placeholder]="input.placeholder" [(ngModel)]="input.value">
+    <div *ngIf="selectedItem">
+        <h2>{{ selectedItem }}</h2>
+        <div *ngFor="let input of inputs">
+            <label>{{input.label}}: </label>
+            <!-- <input [type]="input.type" [placeholder]="input.placeholder" [(ngModel)]="input.value"> -->
+
+            <!-- Handle regular input types -->
+            <ng-container *ngIf="input.type !== 'datalist' && input.type !== 'dropdown'">
+                <input [type]="input.type" [placeholder]="input.placeholder" [(ngModel)]="input.value" required/>
+            </ng-container>
+
+            <!-- Handle datalist input type -->
+            <ng-container *ngIf="input.type === 'datalist'">
+                <input list="optionsList" placeholder="Choose a timezone" [(ngModel)]="input.value" />
+                <datalist id="optionsList">
+                    <option *ngFor="let option of input.options" [value]="option"></option>
+                </datalist>
+            </ng-container>
+
+            <!-- Handle dropdown input type -->
+            <ng-container *ngIf="input.type === 'dropdown'">
+                <select [(ngModel)]="input.value">
+                    <option *ngFor="let option of input.options" [value]="option">{{ option }}</option>
+                </select>
+            </ng-container>
+
+
+        </div>
+        <button (click)="executeFunction()">Execute</button>
+        <div *ngIf="output">
+            <h3>Output:</h3>
+            <p>{{ output }}</p>
+        </div>
     </div>
-    <button (click)="executeFunction()">Execute</button>
-    <div *ngIf="output">
-        <h3>Output:</h3>
-        <p>{{ output }}</p>
-    </div>
-</div>
 
 </main>
