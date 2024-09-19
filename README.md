@@ -2,6 +2,18 @@
 
 `npm install`
 
+Create a file for the Environment setup for the AWS Cognito authentication in the path 
+
+/client/src/environments/environment.ts and replace with your values.
+
+``` 
+export const environment = {
+cognitoClientId: 'your_Cognito_Client_ID',
+cognitoDomain: 'Your_Cognito_Domain',
+redirectUri: 'URL'
+};
+```
+
 ## Frontend
 
 `cd client`
