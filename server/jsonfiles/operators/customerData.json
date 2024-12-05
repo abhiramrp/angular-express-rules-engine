@@ -1,0 +1,31 @@
+{
+	"name": "Customer Validation",
+	"conditions": {
+		"all": [
+			{
+				"fact": "customer_info",
+				"operator": "greaterThanInclusive",
+				"value": 200,
+				"path": "$.revenue"
+			},
+			{
+				"fact": "customer_info",
+				"operator": "notIn",
+				"value": ["Malta", "North Korea", "Japan"],
+				"path": "$.country"
+			},
+			{
+				"fact": "customer_info",
+				"operator": "greaterThanInclusive",
+				"value": 3000,
+				"path": "$.num_shipments"
+			}
+		]
+	},
+	"event": {
+		"type": "customer-validation",
+		"params": {
+			"message": "The company is valid!"
+		}
+	}
+}

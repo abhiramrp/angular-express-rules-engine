@@ -1,5 +1,8 @@
 import { Engine } from "json-rules-engine";
+import { query } from "./db";
+
 const levenshtein = require("fast-levenshtein");
+
 
 // OPERATORS LOGIC
 function calculateSimilarity(text1: string, text2: string): number {
@@ -48,6 +51,7 @@ function isAlmostPalindrome(str: string, diff: number): boolean {
 
 	return canBePalindrome(str, diff);
 }
+
 
 // OPERATORS
 
@@ -117,5 +121,36 @@ const operatorAlmostPalindrome = async (palindromeString: string): Promise<strin
 	}
 };
 
+const operatorCustomerData = async (customer: string): Promise<string> => {
+	const jsonRulesData = require("../jsonfiles/operators/customerData.json");
+	const engine = new Engine();
+	engine.addRule(jsonRulesData);
 
-export {operatorAlmostPalindrome, operatorTextSimilarity};
+	try {
+		const db_result = await query(`SELECT * FROM customers WHERE LOWER(name) = LOWER('${customer}')`);
+
+		if (db_result.rowCount == 0) {
+			return `${customer} is not in the database.`; 
+		}
+
+		const facts = { customer_info: db_result.rows[0]}; 
+
+		console.log({facts});
+
+		const results = await engine.run(facts); 
+
+		let message = results.events.length > 0 ? `${customer} is a valid business.` : `${customer} is not a valid business.`; 
+
+		console.log({ message });
+		return message;
+
+	} catch (error) {
+		console.error("Error running customer data operator: ", error);
+		throw new Error("Internal error processing customer data logic.");
+
+	}
+
+}
+
+
+export {operatorAlmostPalindrome, operatorTextSimilarity, operatorCustomerData};

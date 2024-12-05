@@ -22,6 +22,7 @@ export class RulesEngineComponent implements OnInit {
     'Date Comparison',
     'Timezone Conversion',
     'Date Conversion',
+    'Customer Validation'
   ];
 
   selectedItem: string | null = null;
@@ -143,6 +144,10 @@ async signIn() {
           { label: 'Date', type: 'date' },
           { label: 'Date Format', type: 'dropdown', options: ["MM/DD/YYYY", "DD/MM/YYYY", "Mon Day, Year", "Day Mon Year", "Weekday, Month Day, Year", "Weekday Day Month Year"] },
         ];
+      case 'Customer Validation':
+        return [
+          { label: 'Customer', type: 'text', placeholder: 'Enter any company name'}
+        ]; 
       default:
         return [];
     }
@@ -172,6 +177,8 @@ async signIn() {
         return this.api.timezoneConversionOperator(inputs[0].value, inputs[1].value);
       case 'Date Conversion':
         return this.api.dateConversionOperator(inputs[0].value, inputs[1].value);
+      case 'Customer Validation':
+        return this.api.customerDataOperator(inputs[0].value);
       default:
         return 'No action defined';
     }

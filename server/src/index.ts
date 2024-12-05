@@ -6,6 +6,7 @@ const cors = require("cors");
 import {
 	operatorAlmostPalindrome,
 	operatorTextSimilarity,
+	operatorCustomerData
 } from "./rulesEngine";
 import {
 	operatorDateComparison,
@@ -67,6 +68,20 @@ app.post("/almost-palindrome", async (req: Request, res: Response) => {
 	} catch (error) {
 		res.status(400).json({ error });
 	}
+});
+
+app.post("/customer-data", async (req: Request, res: Response) => {
+	const { customer } = req.body; 
+	console.log(customer);
+
+	try {
+		const result = await operatorCustomerData(customer); 
+		console.log({ result });
+		res.json({ result });
+	} catch (error) {
+		res.status(400).json({ error });
+	}
+
 });
 
 app.post("/date-comparison", async (req: Request, res: Response) => {
@@ -178,7 +193,8 @@ app.post("/language", async (req: Request, res: Response) => {
 
 app.get("/db", async (req: Request, res: Response) => {
 	try {
-		const result = await query("SELECT * FROM customers"); // Replace with your table name
+		const result = await query("SELECT * FROM customers WHERE LOWER(name)=LOWER('nikE')"); // Replace with your table name
+		console.log(result.rows);
 		res.json(result.rows);
 	} catch (err) {
 		console.error(err);
