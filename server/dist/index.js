@@ -17,14 +17,14 @@ const dotenv_1 = __importDefault(require("dotenv"));
 const cors = require("cors");
 const rulesEngine_1 = require("./rulesEngine");
 const otherOperators_1 = require("./otherOperators");
+const db_1 = require("./db");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3000;
-app.use(cors({
-    origin: "http://localhost:4200",
-}));
+app.use(cors());
 app.use(express_1.default.json());
 app.get("/", (req, res) => {
+    // res.send("Hello from Express with TypeScript");
     res.send("Hello from Express with TypeScript");
 });
 app.listen(PORT, () => {
@@ -105,12 +105,12 @@ app.post("/date-conversion", (req, res) => __awaiter(void 0, void 0, void 0, fun
     if (!date || !datetype) {
         return res.status(400).json({ error: "Inputs required." });
     }
-    const d = new Date(date);
+    const d = new Date(date + "T00:00:00");
     if (isNaN(d.getTime())) {
         return res.status(400).json({ error: "Invalid date format." });
     }
     try {
-        const result = yield (0, otherOperators_1.operatorDateConversion)(date, datetype);
+        const result = yield (0, otherOperators_1.operatorDateConversion)(d, datetype);
         console.log({ result });
         res.json({ result });
     }
@@ -146,5 +146,15 @@ app.post("/language", (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     catch (error) {
         res.status(400).json({ error });
+    }
+}));
+app.get("/db", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield (0, db_1.query)("SELECT * FROM customers"); // Replace with your table name
+        res.json(result.rows);
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).send("Server error");
     }
 }));

@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.operatorTextSimilarity = exports.operatorAlmostPalindrome = void 0;
 const json_rules_engine_1 = require("json-rules-engine");
 const levenshtein = require("fast-levenshtein");
-const engine = new json_rules_engine_1.Engine();
 // OPERATORS LOGIC
 function calculateSimilarity(text1, text2) {
     // Normalize by removing extra whitespace and converting to lowercase
@@ -50,45 +49,11 @@ function isAlmostPalindrome(str, diff) {
     }
     return canBePalindrome(str, diff);
 }
-function getDateDifference(date1, date2) {
-    if (date1 > date2) {
-        [date1, date2] = [date2, date1];
-    }
-    let years = date2.getFullYear() - date1.getFullYear();
-    let months = date2.getMonth() - date1.getMonth();
-    let days = date2.getDate() - date1.getDate();
-    let hours = date2.getHours() - date1.getHours();
-    let minutes = date2.getMinutes() - date1.getMinutes();
-    let seconds = date2.getSeconds() - date1.getSeconds();
-    console.log(years, months, days, hours, minutes, seconds);
-    if (seconds < 0) {
-        seconds += 60;
-        minutes -= 1;
-    }
-    if (minutes < 0) {
-        minutes += 60;
-        hours -= 1;
-    }
-    if (hours < 0) {
-        hours += 24;
-        days -= 1;
-    }
-    if (days < 0) {
-        const prevMonth = new Date(date2.getFullYear(), date2.getMonth() - 1, 0);
-        days += prevMonth.getDate();
-        months -= 1;
-    }
-    if (months < 0) {
-        months += 12;
-        years -= 1;
-    }
-    let arr = [years, months, days, hours, minutes, seconds];
-    return arr;
-}
 // OPERATORS
 const operatorTextSimilarity = (text1, text2) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const jsonRulesData = require("../jsonfiles/operators/textSimilarity.json");
+    const engine = new json_rules_engine_1.Engine();
     engine.addRule(jsonRulesData);
     const facts = { texts: { text1, text2 } };
     console.log({ facts });
@@ -113,6 +78,7 @@ exports.operatorTextSimilarity = operatorTextSimilarity;
 const operatorAlmostPalindrome = (palindromeString) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const jsonRulesData = require("../jsonfiles/operators/almostPalindrome.json");
+    const engine = new json_rules_engine_1.Engine();
     engine.addRule(jsonRulesData);
     const facts = { palindromeString };
     console.log({ facts });

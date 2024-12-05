@@ -14,6 +14,7 @@ import {
 	operatorLanguage,
 	operatorTimezoneConversion,
 } from "./otherOperators";
+import { query } from "./db";
 
 dotenv.config();
 
@@ -172,5 +173,15 @@ app.post("/language", async (req: Request, res: Response) => {
 		res.json({ result });
 	} catch (error) {
 		res.status(400).json({ error });
+	}
+});
+
+app.get("/db", async (req: Request, res: Response) => {
+	try {
+		const result = await query("SELECT * FROM customers"); // Replace with your table name
+		res.json(result.rows);
+	} catch (err) {
+		console.error(err);
+		res.status(500).send("Server error");
 	}
 });

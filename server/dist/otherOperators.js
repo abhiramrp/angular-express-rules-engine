@@ -156,8 +156,8 @@ exports.operatorTimezoneConversion = operatorTimezoneConversion;
 const operatorDateConversion = (date, datetype) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const dateFormatsData = require("../jsonfiles/dateconversion.json");
-        console.log(dateFormatsData);
         const v = dateFormatsData[datetype];
+        console.log(date);
         const newDate = new Date(date).toLocaleDateString(v["locale"], v["options"]);
         return newDate;
     }
